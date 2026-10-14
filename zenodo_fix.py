@@ -17,10 +17,13 @@ import json
 import hashlib
 import os
 
+# All paths are relative to this script's folder (override with ZENODO_FIX_DIR).
+WORK_DIR = os.environ.get("ZENODO_FIX_DIR", os.path.dirname(os.path.abspath(__file__)))
+
 print("=== M-8 Gate: Zenodo metadata fix for 21910349 ===")
 
 # Load existing payload if it exists
-payload_path = "/Users/christophermichaelbaird/Documents/New OpenCode Project/zenodo_metadata_fix_payload_21910349.json"
+payload_path = os.path.join(WORK_DIR, "zenodo_metadata_fix_payload_21910349.json")
 if os.path.exists(payload_path):
     with open(payload_path) as f:
         payload = json.load(f)
@@ -60,7 +63,7 @@ gate_files = [
 ]
 
 for fname in gate_files:
-    path = os.path.join("/Users/christophermichaelbaird/Documents/New OpenCode Project", fname)
+    path = os.path.join(WORK_DIR, fname)
     if os.path.exists(path):
         with open(path, "rb") as f:
             sha = hashlib.sha256(f.read()).hexdigest()
@@ -92,7 +95,7 @@ if "metadata" in payload:
             final_payload["metadata"][k] = v
 
 # Write corrected payload
-output_path = "/Users/christophermichaelbaird/Documents/New OpenCode Project/zenodo_metadata_fix_payload_21910349_CORRECTED.json"
+output_path = os.path.join(WORK_DIR, "zenodo_metadata_fix_payload_21910349_CORRECTED.json")
 with open(output_path, "w") as f:
     json.dump(final_payload, f, indent=2)
 
